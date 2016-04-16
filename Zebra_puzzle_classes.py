@@ -26,6 +26,7 @@ class Domain:
     def deleate(self, target_value):
         self.domain_values.remove(target_value)
 
+    # Function no finished
     def split_in_half(self):
         return
 
