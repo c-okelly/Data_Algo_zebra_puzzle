@@ -42,42 +42,24 @@ class Problem:
 
     def apply_reduction(self):
 
-        # Cycle through all constraints
+        # Cycle through all constraints and execute each one
         for constraint in self.__constraint_set:
-            print(type(constraint))
+
             # var equal to var constraint
             if type(constraint) == Constraint_equality_var_var:
-                print(True)
+                constraint.is_satisfied(self.get_varialbe_by_name(constraint.ob_variable_1), self.get_varialbe_by_name(constraint.ob_variable_2))
 
             # var equal to constant constraint
             elif type(constraint) == Constraint_equality_var_cons:
-                print(True)
+                constraint.is_satisfied(self.get_varialbe_by_name(constraint.ob_variable_1), constraint.ob_constant_1)
 
             # var plus constant constraint
-            elif type(constraint) == 
+            elif type(constraint) == Constraint_equality_var_plus_cons:
+                constraint.is_satisfied(self.get_varialbe_by_name(constraint.ob_variable_1),self.get_varialbe_by_name(constraint.ob_variable_2),constraint.ob_constant_1)
 
+            elif type(constraint) == Constraint_difference_var_var:
+                print(True)
 
-            # var not equal to other of same type
-
-                # First constraint
-        #     con = self.__constraint_set[0]
-        #     print(con.ob_variable_1,con.ob_variable_2)
-        #     x =self.get_varialbe_by_name(con.ob_variable_1)
-        #     x.domain.delete(5)
-        #     y = self.get_varialbe_by_name(con.ob_variable_2)
-        #     y.domain.delete(1)
-
-                # Second type of constraint testing
-            # con = self.__constraint_set[1]
-            # # print(con)
-            # x =self.get_varialbe_by_name(con.ob_variable_1)
-            # y = con.ob_constant_1
-            # x.domain.delete(5)
-            # x.domain.delete(4)
-            # x.domain.delete(3)
-            # x.domain.delete(2)
-            # # print(x,y)
-        # con.is_satisfied(self.get_varialbe_by_name(con.ob_variable_1), con.ob_constant_1)
 
         # Third type of constraint
         # con = self.__constraint_set[2]
@@ -134,7 +116,6 @@ class Variable:
     def __eq__(self, other):
         return self.domain == other
 
-
 class Domain:
 
     def __init__(self,no_values=5):
@@ -171,7 +152,6 @@ class Domain:
         else:
             return False
 
-
 class Constraints:
 
     def __init__(self):
@@ -198,31 +178,24 @@ class Constraint_equality_var_var(Constraints):
     #Do they have at least 1 value in common.
     def is_satisfied(self,variable_1,variable_2):
 
-        print(variable_1.domain, variable_2.domain)
+        # print(variable_1.domain, variable_2.domain)
 
         if variable_1 == variable_2:
-            satisfied = True
+            return True
 
         else:
             inseresction = list(set(variable_1.domain.domain_values).intersection(variable_2.domain.domain_values))
-            print("Intersection",inseresction)
+            # print("Intersection",inseresction)
             # Remove options from domain if not common in both
-            for i in variable_1.domain.domain_values:
-                if i not in inseresction:
-                    variable_1.domain.delete(int(i))
 
-            for i in variable_2.domain.domain_values:
-                if i not in inseresction:
-                    variable_2.domain.delete(int(i))
+            variable_1.domain.domain_values = inseresction
+            variable_2.domain.domain_values = inseresction
 
-            satisfied = True
-
-        print(variable_1.domain, variable_2.domain)
-        print(satisfied)
+            return True
 
 
     def __repr__(self):
-        return "Equality constraint for " + str(self.varialbe_1) + " equal to "+ str(self.varaible_2)
+        return "Equality constraint for " + str(self.ob_variable_1) + " equal to "+ str(self.ob_variable_2)
 
 class Constraint_equality_var_cons(Constraints):
 
@@ -253,19 +226,24 @@ class Constraint_equality_var_plus_cons(Constraints):
         self.ob_constant_1 = constant_1
         self.either_side = either_side
 
-    def is_satisfied(self,variable_1,variable_2,constant_1):
+    def is_satisfied(self,variable_1,variable_2,constant_1,no_domains):
 
         print(variable_1,variable_2,constant_1)
 
+        domain_range = list(range(1,no_domains+1))
         possilbe_locations = []
 
         if self.either_side == 0:
             for value in variable_2.domain.domain_values:
                 possilbe_domain = value + 1
                 possilbe_locations.append(possilbe_domain)
-            print(possilbe_locations)
-            # Set variable 1 to new possilbe domains
-            variable_1.domain.domain_values = possilbe_locations
+
+            # Set variable 1 to new possible domains
+            # Only allow legal domains
+            legal_domains = list(set(domain_range).intersection(possilbe_locations))
+            variable_1.domain.domain_values = legal_domains
+
+
         elif self.either_side:
             right_of_house = []
             left_of_house = []
@@ -278,13 +256,13 @@ class Constraint_equality_var_plus_cons(Constraints):
                 left_of_house.append(possible_domain)
             # Get list of unique elements from set
             possilbe_locations = list(set(left_of_house+right_of_house))
+
             # Set variable 1 to new possilbe domains
-            variable_1.domain.domain_values = possilbe_locations
-            print(possilbe_locations)
+            # Only allow legal domains
+            legal_domains = list(set(domain_range).intersection(possilbe_locations))
+            variable_1.domain.domain_values = legal_domains
 
-
-
-        print(variable_1,variable_2,constant_1)
+        # print(variable_1,variable_2,constant_1)
 
 
 
@@ -326,15 +304,22 @@ if __name__ == '__main__':
     # Create the problem
     zebra_problem = Problem(variables)
 
+    # Test to ensure constraints are working
+    Ivory = zebra_problem.get_varialbe_by_name("Ivory")
+    Ivory.domain.domain_values = [1]
+
     # Create constraints
     zebra_problem.create_constraint(Constraint_equality_var_var("Red","English"))
-    zebra_problem.create_constraint(Constraint_equality_var_cons("Red",1))
-    zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Green","Ivory",1,0))
-    zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Norwegian","Norwegian",1,1))
+    # zebra_problem.create_constraint(Constraint_equality_var_cons("Red",1))
+    zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Green","Ivory",1,1))
+    # zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Norwegian","Norwegian",1,1))
     zebra_problem.create_constraint(Constraint_difference_var_var("Nationality"))
 
     # Run reduction tillgs all ture
     zebra_problem.apply_reduction()
     # zebra_problem.print_current_resutls()
 
+    no_domains = 5
+    domain_range = list(range(1,no_domains+1))
+    print(domain_range)
 
