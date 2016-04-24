@@ -26,3 +26,26 @@
         #     drink = Variable(item,"Drink",5)
         #     self.varialbes_list.append(drink)
 
+
+ # Third type of constraint
+        # con = self.__constraint_set[2]
+        # print(con)
+        # ivory = self.get_varialbe_by_name(con.ob_variable_2)
+        # ivory.domain.delete(1)
+        # ivory.domain.delete(2)
+        # ivory.domain.delete(5)
+        # ivory.domain.delete(4)
+        # con.is_satisfied(self.get_varialbe_by_name(con.ob_variable_1),self.get_varialbe_by_name(con.ob_variable_2),con.ob_constant_1)
+
+        # Forth type constraint
+
+        # con = self.__constraint_set[4]
+        # print(con, "\n")
+        # x = self.get_varialbe_by_name("Japanese")
+        # x.domain.domain_values = [5]
+        # # print(x)
+        # list_varialbe_of_same_type = self.return_varialbes_by_type(con.variable_type)
+        # # print(var_type)
+        #
+        # # Apply constriant by calling object variable referance and putting in object
+        # con.is_satisfied(list_varialbe_of_same_type)

@@ -21,8 +21,13 @@ class Problem:
 
     def print_current_resutls(self):
 
+        count = 0
         for item in self.__varialbes_list:
             print(item)
+            #Break line every fifth line
+            count += 1
+            if count%5 == 0:
+                print("")
 
     def __create_variables(self):
         # Create a variables for each of the catagories
@@ -42,47 +47,32 @@ class Problem:
 
     def apply_reduction(self):
 
+        no_domains_reduced = True
+        no_domains_left = self.count_no_domains_left()
+
+        for i in range(0,15):
         # Cycle through all constraints and execute each one
-        for constraint in self.__constraint_set:
+            for constraint in self.__constraint_set:
 
-            # var equal to var constraint
-            if type(constraint) == Constraint_equality_var_var:
-                constraint.is_satisfied(self.get_varialbe_by_name(constraint.ob_variable_1), self.get_varialbe_by_name(constraint.ob_variable_2))
+                # var equal to var constraint
+                if type(constraint) == Constraint_equality_var_var:
+                    constraint.is_satisfied(self.get_varialbe_by_name(constraint.ob_variable_1), self.get_varialbe_by_name(constraint.ob_variable_2))
 
-            # var equal to constant constraint
-            elif type(constraint) == Constraint_equality_var_cons:
-                constraint.is_satisfied(self.get_varialbe_by_name(constraint.ob_variable_1), constraint.ob_constant_1)
+                # var equal to constant constraint
+                elif type(constraint) == Constraint_equality_var_cons:
+                    constraint.is_satisfied(self.get_varialbe_by_name(constraint.ob_variable_1), constraint.ob_constant_1)
 
-            # var plus constant constraint
-            elif type(constraint) == Constraint_equality_var_plus_cons:
-                constraint.is_satisfied(self.get_varialbe_by_name(constraint.ob_variable_1),self.get_varialbe_by_name(constraint.ob_variable_2),constraint.ob_constant_1)
+                # var plus constant constraint
+                elif type(constraint) == Constraint_equality_var_plus_cons:
+                    constraint.is_satisfied(self.get_varialbe_by_name(constraint.ob_variable_1),self.get_varialbe_by_name(constraint.ob_variable_2),constraint.ob_constant_1,self.no_domains)
 
-            elif type(constraint) == Constraint_difference_var_var:
-                print(True)
-
-
-        # Third type of constraint
-        # con = self.__constraint_set[2]
-        # print(con)
-        # ivory = self.get_varialbe_by_name(con.ob_variable_2)
-        # ivory.domain.delete(1)
-        # ivory.domain.delete(2)
-        # ivory.domain.delete(5)
-        # ivory.domain.delete(4)
-        # con.is_satisfied(self.get_varialbe_by_name(con.ob_variable_1),self.get_varialbe_by_name(con.ob_variable_2),con.ob_constant_1)
-
-        # Forth type constraint
-
-        # con = self.__constraint_set[4]
-        # print(con, "\n")
-        # x = self.get_varialbe_by_name("Japanese")
-        # x.domain.domain_values = [5]
-        # # print(x)
-        # list_varialbe_of_same_type = self.return_varialbes_by_type(con.variable_type)
-        # # print(var_type)
-        #
-        # # Apply constriant by calling object variable referance and putting in object
-        # con.is_satisfied(list_varialbe_of_same_type)
+                elif type(constraint) == Constraint_difference_var_var:
+                    for var_type in self.varialbe_types:
+                        # Get all variables of current type
+                        list_variable_of_same_type = self.return_varialbes_by_type(var_type)
+                        # Apply constraint
+                        constraint.is_satisfied(list_variable_of_same_type)
+            print(self.count_no_domains_left())
 
         return
 
@@ -102,6 +92,13 @@ class Problem:
             problem_solved = var.domain.is_reduced_to_one_value()
             print(problem_solved)
         return problem_solved
+
+    def count_no_domains_left(self):
+        count = 0
+        for var in self.__varialbes_list:
+            no_values = var.domain.count()
+            count += no_values
+        return count
 
 class Variable:
 
@@ -139,6 +136,9 @@ class Domain:
     # Function not finished
     def split_in_half(self):
         return
+
+    def count(self):
+        return len(self.domain_values)
 
     def is_empty(self):
         if len(self.domain_values) == 0:
@@ -228,7 +228,7 @@ class Constraint_equality_var_plus_cons(Constraints):
 
     def is_satisfied(self,variable_1,variable_2,constant_1,no_domains):
 
-        print(variable_1,variable_2,constant_1)
+        # print(variable_1,variable_2,constant_1)
 
         domain_range = list(range(1,no_domains+1))
         possilbe_locations = []
@@ -272,8 +272,8 @@ class Constraint_equality_var_plus_cons(Constraints):
 
 class Constraint_difference_var_var(Constraints):
 
-    def __init__(self,variable_type):
-        self.variable_type = variable_type
+    def __init__(self):
+        return
 
     def is_satisfied(self,list_1_variable_type):
 
@@ -284,7 +284,11 @@ class Constraint_difference_var_var(Constraints):
                 # Other wise remove the domain that variable 1 has from other variables in list
                for variable_2 in list_1_variable_type:
                    if variable.name != variable_2.name:
-                       variable_2.domain.delete(variable.domain.domain_values[0])
+                       # Try to delete domain no
+                       try:
+                           variable_2.domain.delete(variable.domain.domain_values[0])
+                       except:
+                           pass
 
     def __repr__(self):
         return "Constraint for varialbe_1 not being equal to varialbe_2 in same type"
@@ -305,21 +309,35 @@ if __name__ == '__main__':
     zebra_problem = Problem(variables)
 
     # Test to ensure constraints are working
-    Ivory = zebra_problem.get_varialbe_by_name("Ivory")
-    Ivory.domain.domain_values = [1]
+    # Ivory = zebra_problem.get_varialbe_by_name("English")
+    # Ivory.domain.domain_values = [1]
+
+    # Test
 
     # Create constraints
     zebra_problem.create_constraint(Constraint_equality_var_var("Red","English"))
-    # zebra_problem.create_constraint(Constraint_equality_var_cons("Red",1))
-    zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Green","Ivory",1,1))
-    # zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Norwegian","Norwegian",1,1))
-    zebra_problem.create_constraint(Constraint_difference_var_var("Nationality"))
+    zebra_problem.create_constraint(Constraint_equality_var_var("Spaniard","Dog"))
+    zebra_problem.create_constraint(Constraint_equality_var_var("Coffee","Green"))
+    zebra_problem.create_constraint(Constraint_equality_var_var("Ukrainian","Tea"))
+
+    zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Green","Ivory",1,0))
+    zebra_problem.create_constraint(Constraint_equality_var_var("Snakes and Ladders","Snails"))
+
+    zebra_problem.create_constraint(Constraint_equality_var_cons("Milk",3))
+    zebra_problem.create_constraint(Constraint_equality_var_cons("Norwegian",1))
+
+    zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Pictionary","Fox",1,1))
+    zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Cluedo","Horse",1,1))
+
+    zebra_problem.create_constraint(Constraint_equality_var_var("Travel The World","Orange Juice"))
+    zebra_problem.create_constraint(Constraint_equality_var_var("Japanese","Backgammon"))
+    
+    zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Norwegian","Blue",1,1))
+
+    # General constraint for domains being unable to have the same value
+    zebra_problem.create_constraint(Constraint_difference_var_var())
 
     # Run reduction tillgs all ture
     zebra_problem.apply_reduction()
-    # zebra_problem.print_current_resutls()
-
-    no_domains = 5
-    domain_range = list(range(1,no_domains+1))
-    print(domain_range)
+    zebra_problem.print_current_resutls()
 
