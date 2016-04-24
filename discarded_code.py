@@ -1,5 +1,11 @@
 # Discarded code from project that might be usefull later
 
+        # self.__nationalities = variables[0]
+#         self.__colors = variables[1]
+#         self.__pets = variables[2]
+#         self.__board_games = variables[3]
+#         self.__drinks = variables[4]
+
 # for item in self.__nationalities:
         #     nationality = Variable(item,"Nationality",5)
         #     self.varialbes_list.append(nationality)
