@@ -28,30 +28,15 @@ class Problem:
 
     def __create_variables(self):
 
-        # Desigened so the program could scale for more variable types!
+        # Desigened so the program could scale for more variable types with increased domain range!
         variable_type = variables[-1]
-        print(variable_type)
+        no_domains = len(variables[0])
+
         # Create a variables for each of the catagories
-
-        for item in self.__nationalities:
-            nationality = Variable(item,"Nationality",5)
-            self.varialbes_list.append(nationality)
-
-        for item in self.__colors:
-            color = Variable(item,"Color",5)
-            self.varialbes_list.append(color)
-
-        for item in self.__pets:
-            pet = Variable(item,"Pet",5)
-            self.varialbes_list.append(pet)
-
-        for item in self.__board_games:
-            board_game = Variable(item,"Board Game",5)
-            self.varialbes_list.append(board_game)
-
-        for item in self.__drinks:
-            drink = Variable(item,"Drink",5)
-            self.varialbes_list.append(drink)
+        for no_1 in range(0,len(variable_type)):
+            for no_2 in range(0,len(variables[no_1])):
+                variable = Variable(variables[no_1][no_2],variable_type[no_1],no_domains)
+                self.varialbes_list.append(variable)
 
     def get_varialbe_by_name(self,search_name):
 
@@ -289,6 +274,8 @@ class Constraint_difference_var_var(Constraints):
 
 
 if __name__ == '__main__':
+    # Slightly altered from standard format so late item in list is the variable types.
+    # Format would allow program to be more flexible in future
     variables = [["English", "Spaniard", "Ukrainian", "Norwegian", "Japanese"],
                  ["Red","Green","Ivory","Norwegian","Yellow"],
                  ["Dog","Snails","Fox","Zebra","Horse"],
@@ -306,7 +293,8 @@ if __name__ == '__main__':
     zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Norwegian","Norwegian",1,1))
     zebra_problem.create_constraint(Constraint_difference_var_var("Dog"))
 
+    # Run reduction tillgs all ture
     zebra_problem.apply_reduction()
-    # zebra_problem.print_current_resutls()
+    zebra_problem.print_current_resutls()
 
 
