@@ -28,7 +28,11 @@ class Problem:
 
     def __create_variables(self):
 
+        # Desigened so the program could scale for more variable types!
+        variable_type = variables[-1]
+        print(variable_type)
         # Create a variables for each of the catagories
+
         for item in self.__nationalities:
             nationality = Variable(item,"Nationality",5)
             self.varialbes_list.append(nationality)
@@ -82,20 +86,24 @@ class Problem:
         # con.is_satisfied(self.get_varialbe_by_name(con.ob_variable_1), con.ob_constant_1)
 
         # Third type of constraint
-        con = self.constraint_set[2]
-        print(con)
-        ivory = self.get_varialbe_by_name(con.ob_variable_2)
-        ivory.domain.delete(1)
-        ivory.domain.delete(2)
-        ivory.domain.delete(5)
-        ivory.domain.delete(4)
+        # con = self.constraint_set[2]
+        # print(con)
+        # ivory = self.get_varialbe_by_name(con.ob_variable_2)
+        # ivory.domain.delete(1)
+        # ivory.domain.delete(2)
+        # ivory.domain.delete(5)
+        # ivory.domain.delete(4)
+        # con.is_satisfied(self.get_varialbe_by_name(con.ob_variable_1),self.get_varialbe_by_name(con.ob_variable_2),con.ob_constant_1)
+
+        # Forth type constraint
 
 
         # Apply constriant by calling object variable referance and putting in object
-        con.is_satisfied(self.get_varialbe_by_name(con.ob_variable_1),self.get_varialbe_by_name(con.ob_variable_2),con.ob_constant_1)
+        # con.is_satisfied(self.get_varialbe_by_name(con.ob_variable_1),self.get_varialbe_by_name(con.ob_variable_2),con.ob_constant_1)
+
+        return
 
     def test_if_problem_sloved(self):
-
         if 1 == 1:
             self.problem_solved = True
 
@@ -272,9 +280,8 @@ class Constraint_equality_var_plus_cons(Constraints):
 
 class Constraint_difference_var_var(Constraints):
 
-    def __init__(self,varailbe_1,varialbe_2):
-        self.varialbe_1 = varailbe_1
-        self.varialbe_2 = varialbe_2
+    def __init__(self,variable_type):
+        self.variable_type = variable_type
 
     def __repr__(self):
         return "Constraint for varialbe_1 not being equal to varialbe_2 in same type"
@@ -286,7 +293,8 @@ if __name__ == '__main__':
                  ["Red","Green","Ivory","Norwegian","Yellow"],
                  ["Dog","Snails","Fox","Zebra","Horse"],
                  ["Snakes and Ladders", "Cluedo", "Pictionary", "Travel The World", "Backgammon"],
-                 ["Coffee","Milk","Orange Juice","Tea","Water"]]
+                 ["Coffee","Milk","Orange Juice","Tea","Water"],
+                 ["Nationality", "Color", "Pet","Board Game","Drink"]]
 
     # Create the problem
     zebra_problem = Problem(variables)
@@ -294,8 +302,9 @@ if __name__ == '__main__':
     # Create constraints
     zebra_problem.create_constraint(Constraint_equality_var_var("Red","English"))
     zebra_problem.create_constraint(Constraint_equality_var_cons("Red",1))
-    zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Green","Ivory",1,1))
+    zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Green","Ivory",1,0))
     zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Norwegian","Norwegian",1,1))
+    zebra_problem.create_constraint(Constraint_difference_var_var("Dog"))
 
     zebra_problem.apply_reduction()
     # zebra_problem.print_current_resutls()
