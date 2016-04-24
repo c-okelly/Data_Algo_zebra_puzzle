@@ -241,7 +241,9 @@ class Constraint_equality_var_plus_cons(Constraints):
             # Set variable 1 to new possible domains
             # Only allow legal domains
             legal_domains = list(set(domain_range).intersection(possilbe_locations))
-            variable_1.domain.domain_values = legal_domains
+            # Only take domains already in variable domain list
+            select_domains = list(set(legal_domains).intersection(variable_1.domain.domain_values))
+            variable_1.domain.domain_values = select_domains
 
 
         elif self.either_side:
@@ -260,7 +262,9 @@ class Constraint_equality_var_plus_cons(Constraints):
             # Set variable 1 to new possilbe domains
             # Only allow legal domains
             legal_domains = list(set(domain_range).intersection(possilbe_locations))
-            variable_1.domain.domain_values = legal_domains
+            # Only take domains already in variable domain list
+            select_domains = list(set(legal_domains).intersection(variable_1.domain.domain_values))
+            variable_1.domain.domain_values = select_domains
 
         # print(variable_1,variable_2,constant_1)
 
@@ -328,10 +332,10 @@ if __name__ == '__main__':
 
     zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Pictionary","Fox",1,1))
     zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Cluedo","Horse",1,1))
-
+    
     zebra_problem.create_constraint(Constraint_equality_var_var("Travel The World","Orange Juice"))
     zebra_problem.create_constraint(Constraint_equality_var_var("Japanese","Backgammon"))
-    
+
     zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Norwegian","Blue",1,1))
 
     # General constraint for domains being unable to have the same value
