@@ -6,45 +6,85 @@ class Problem:
 
     problem_solved = False
     varialbes_list = []
+    constraint_set = []
 
     def __init__(self,variables):
-        self.nationalities = variables[0]
-        self.colors = variables[1]
-        self.pets = variables[2]
-        self.board_games = variables[3]
-        self.drinks = variables[4]
+        self.__nationalities = variables[0]
+        self.__colors = variables[1]
+        self.__pets = variables[2]
+        self.__board_games = variables[3]
+        self.__drinks = variables[4]
 
         # Call function to create varialbes from list
         self.__create_variables()
 
     def __repr__(self):
-        return "Main problems class. The problem is currently sloved =>" + self.problem_solved
+        return "Main problems class. The problem is currently sloved => " + str(self.problem_solved)
+
+    def print_current_resutls(self):
+
+        for item in self.varialbes_list:
+            print(item)
 
     def __create_variables(self):
 
         # Create a variables for each of the catagories
-        for item in self.nationalities:
+        for item in self.__nationalities:
             nationality = Variable(item,"Nationality",5)
             self.varialbes_list.append(nationality)
 
-        for item in self.colors:
+        for item in self.__colors:
             color = Variable(item,"Color",5)
             self.varialbes_list.append(color)
 
-        for item in self.pets:
+        for item in self.__pets:
             pet = Variable(item,"Pet",5)
             self.varialbes_list.append(pet)
 
-        for item in self.board_games:
+        for item in self.__board_games:
             board_game = Variable(item,"Board Game",5)
             self.varialbes_list.append(board_game)
 
-        for item in self.drinks:
+        for item in self.__drinks:
             drink = Variable(item,"Drink",5)
             self.varialbes_list.append(drink)
 
+    def get_varialbe_by_name(self,search_name):
+
+        for variable in self.varialbes_list:
+            if variable.name == search_name:
+                return variable
+
+    def create_constraint(self,constriant):
+        self.constraint_set.append(constriant)
+
+    def apply_reduction(self):
+
+        # Set constraint to be applied
+                # First constraint
+        #     con = self.constraint_set[0]
+        #     print(con.ob_variable_1,con.ob_variable_2)
+        #     x =self.get_varialbe_by_name(con.ob_variable_1)
+        #     x.domain.delete(5)
+        #     y = self.get_varialbe_by_name(con.ob_variable_2)
+        #     y.domain.delete(1)
+
+                # Second type of constraint testing
+            # con = self.constraint_set[1]
+            # # print(con)
+            # x =self.get_varialbe_by_name(con.ob_variable_1)
+            # y = con.ob_constant_1
+            # x.domain.delete(5)
+            # x.domain.delete(4)
+            # x.domain.delete(3)
+            # x.domain.delete(2)
+            # # print(x,y)
+        
+        # Third type of constraint
 
 
+        # Apply constriant by calling object variable referance and putting in object
+        con.is_satisfied(self.get_varialbe_by_name(con.ob_variable_1), con.ob_constant_1)
 
     def test_if_problem_sloved(self):
 
@@ -63,7 +103,6 @@ class Variable:
 
     def __eq__(self, other):
         return self.domain == other
-
 
 
 class Domain:
@@ -105,13 +144,11 @@ class Domain:
 
 class Constraints:
 
-    constaint_set = []
-
     def __init__(self):
-        Constraints.constaint_set.append(self)
+        return
 
-    def __repr__(self):
-        return "Main constraint class with all constraints"
+    # def __repr__(self):
+    #     return "Main constraint class with all constraints"
 
     # Abstract method - Check that constraint is staisfied
     def is_satisfied(self):
@@ -123,21 +160,35 @@ class Constraints:
 
 class Constraint_equality_var_var(Constraints):
 
-    def __init__(self,variable_1,varialbe_2):
-        self.varialbe_1 = variable_1
-        self.varaible_2 = varialbe_2
+    def __init__(self,variable_1,variable_2):
+        self.ob_variable_1 = variable_1
+        self.ob_variable_2 = variable_2
         return
 
     #Do they have at least 1 value in common.
-    def is_satisfied(self):
-        boolChecker = False
+    def is_satisfied(self,variable_1,variable_2):
 
-        print(self.varialbe_1.domain())
-        print(self.varaible_2.domain())
+        print(variable_1.domain, variable_2.domain)
 
+        if variable_1 == variable_2:
+            satisfied = True
 
-    def apply_constraint(self):
-        return
+        else:
+            inseresction = list(set(variable_1.domain.domain_values).intersection(variable_2.domain.domain_values))
+            print("Intersection",inseresction)
+            # Remove options from domain if not common in both
+            for i in variable_1.domain.domain_values:
+                if i not in inseresction:
+                    variable_1.domain.delete(int(i))
+
+            for i in variable_2.domain.domain_values:
+                if i not in inseresction:
+                    variable_2.domain.delete(int(i))
+
+            satisfied = True
+
+        print(variable_1.domain, variable_2.domain)
+        print(satisfied)
 
 
     def __repr__(self):
@@ -146,17 +197,22 @@ class Constraint_equality_var_var(Constraints):
 class Constraint_equality_var_cons(Constraints):
 
     def __init__(self,variable_1,constant_1):
-        self.varialbe_1 = variable_1
-        self.constant_1 = constant_1
-        return
+        self.ob_variable_1 = variable_1
+        self.ob_constant_1 = constant_1
 
-    def test(self):
 
-        if self.varialbe_1 == self.varialbe_2:
-            return True
+    def is_satisfied(self,variable_1,constant_1):
+
+        # If constant is in the list replace domain list with single value
+        if constant_1 in variable_1.domain.domain_values:
+            variable_1.domain.domain_values = [constant_1]
+        # Not sure if this error will ever arise?
+        else:
+            print(constant_1, "is not in the list")
+
 
     def __repr__(self):
-        return "Equality constraint for varialbe and constant " + str(self.varialbe_1) + " equal to "+ str(self.constant_1)
+        return "Equality constraint for varialbe and constant " + str(self.ob_variable_1) + " equal to "+ str(self.ob_constant_1)
 
 class Constraint_equality_var_plus_cons(Constraints):
 
@@ -180,21 +236,22 @@ class Constraint_difference_var_var(Constraints):
 
 
 if __name__ == '__main__':
-    c = Domain()
-    v = Domain()
-
-    print(c,v)
-
-    varr = [4, 5]
-    var = [1, 2, 3, 4, 5]
-
-    common = list(set(var).intersection(varr))
-
     variables = [["English", "Spaniard", "Ukrainian", "Norwegian", "Japanese"],
-                 ["red","green","ivory","blue","yellow"],
-                 ["dog","snails","fox","zebra","horse"],
-                 ["Snakes and Ladders", "Cluedo", "Pictionary", "Travel the World", "Backgammon"],
-                 ["Coffee","milk","orange Juice","tea","water"]]
+                 ["Red","Green","Ivory","Blue","Yellow"],
+                 ["Dog","Snails","Fox","Zebra","Horse"],
+                 ["Snakes and Ladders", "Cluedo", "Pictionary", "Travel The World", "Backgammon"],
+                 ["Coffee","Milk","Orange Juice","Tea","Water"]]
 
-    Zebra_problem = Problem(variables)
+    # Create the problem
+    zebra_problem = Problem(variables)
 
+    # Create constraints
+    zebra_problem.create_constraint(Constraint_equality_var_var("Red","English"))
+    zebra_problem.create_constraint(Constraint_equality_var_cons("Red",1))
+
+    zebra_problem.apply_reduction()
+    zebra_problem.print_current_resutls()
+
+    # dog = Variable("dog",1,5)
+    # print(dog.domain.delete(2))
+    # print(dog.domain)
