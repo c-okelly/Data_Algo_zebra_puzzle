@@ -1,5 +1,5 @@
 # Author Conor O'Kelly
-# This file will contain all of the classes required by the puzzle
+# This file will contain all of the classes required for the puzzle
 
 
 class Problem:
@@ -79,12 +79,20 @@ class Problem:
             # x.domain.delete(3)
             # x.domain.delete(2)
             # # print(x,y)
-        
+        # con.is_satisfied(self.get_varialbe_by_name(con.ob_variable_1), con.ob_constant_1)
+
         # Third type of constraint
+        con = self.constraint_set[2]
+        print(con)
+        ivory = self.get_varialbe_by_name(con.ob_variable_2)
+        ivory.domain.delete(1)
+        ivory.domain.delete(2)
+        ivory.domain.delete(5)
+        ivory.domain.delete(4)
 
 
         # Apply constriant by calling object variable referance and putting in object
-        con.is_satisfied(self.get_varialbe_by_name(con.ob_variable_1), con.ob_constant_1)
+        con.is_satisfied(self.get_varialbe_by_name(con.ob_variable_1),self.get_varialbe_by_name(con.ob_variable_2),con.ob_constant_1)
 
     def test_if_problem_sloved(self):
 
@@ -216,13 +224,51 @@ class Constraint_equality_var_cons(Constraints):
 
 class Constraint_equality_var_plus_cons(Constraints):
 
-    def __init__(self,variable_1,varialbe_2,constant_1):
-        self.varialbe_1 = variable_1
-        self.varaible_2 = varialbe_2
-        return
+    # Extra variable either side. If 0 only look for plus constant. If one can but plus or minus constant
+    def __init__(self,variable_1,varialbe_2,constant_1,either_side):
+        self.ob_variable_1 = variable_1
+        self.ob_variable_2 = varialbe_2
+        self.ob_constant_1 = constant_1
+        self.either_side = either_side
+
+    def is_satisfied(self,variable_1,variable_2,constant_1):
+
+        print(variable_1,variable_2,constant_1)
+
+        possilbe_locations = []
+
+        if self.either_side == 0:
+            for value in variable_2.domain.domain_values:
+                possilbe_domain = value + 1
+                possilbe_locations.append(possilbe_domain)
+            print(possilbe_locations)
+            # Set variable 1 to new possilbe domains
+            variable_1.domain.domain_values = possilbe_locations
+        elif self.either_side:
+            right_of_house = []
+            left_of_house = []
+            for value in variable_2.domain.domain_values:
+                # Add domain value for house to right
+                possible_domain = value + 1
+                right_of_house.append(possible_domain)
+                # Add domain value for house to left
+                possible_domain = value - 1
+                left_of_house.append(possible_domain)
+            # Get list of unique elements from set
+            possilbe_locations = list(set(left_of_house+right_of_house))
+            # Set variable 1 to new possilbe domains
+            variable_1.domain.domain_values = possilbe_locations
+            print(possilbe_locations)
+
+
+
+        print(variable_1,variable_2,constant_1)
+
+
+
 
     def __repr__(self):
-        return "Equality constraint for variable_1 equally to to varialbe_2 + constant" + str(self.varialbe_1) + " equal to "+ str(self.varaible_2)
+        return "Equality constraint for variable_1 equally to to varialbe_2 + constant => " + self.ob_variable_1 + " equal to " + self.ob_variable_2 +" plus " + str(self.ob_constant_1)
 
 class Constraint_difference_var_var(Constraints):
 
@@ -231,13 +277,13 @@ class Constraint_difference_var_var(Constraints):
         self.varialbe_2 = varialbe_2
 
     def __repr__(self):
-        return "Constraint for varialbe_1 not being equal to varialbe_2"
+        return "Constraint for varialbe_1 not being equal to varialbe_2 in same type"
 
 
 
 if __name__ == '__main__':
     variables = [["English", "Spaniard", "Ukrainian", "Norwegian", "Japanese"],
-                 ["Red","Green","Ivory","Blue","Yellow"],
+                 ["Red","Green","Ivory","Norwegian","Yellow"],
                  ["Dog","Snails","Fox","Zebra","Horse"],
                  ["Snakes and Ladders", "Cluedo", "Pictionary", "Travel The World", "Backgammon"],
                  ["Coffee","Milk","Orange Juice","Tea","Water"]]
@@ -248,10 +294,10 @@ if __name__ == '__main__':
     # Create constraints
     zebra_problem.create_constraint(Constraint_equality_var_var("Red","English"))
     zebra_problem.create_constraint(Constraint_equality_var_cons("Red",1))
+    zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Green","Ivory",1,1))
+    zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Norwegian","Norwegian",1,1))
 
     zebra_problem.apply_reduction()
-    zebra_problem.print_current_resutls()
+    # zebra_problem.print_current_resutls()
 
-    # dog = Variable("dog",1,5)
-    # print(dog.domain.delete(2))
-    # print(dog.domain)
+
