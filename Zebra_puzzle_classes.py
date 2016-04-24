@@ -50,8 +50,8 @@ class Problem:
         no_domains_reduced = True
         no_domains_left = self.count_no_domains_left()
 
-        for i in range(0,15):
-        # Cycle through all constraints and execute each one
+        while no_domains_reduced == True:
+            # Cycle through all constraints and execute each one
             for constraint in self.__constraint_set:
 
                 # var equal to var constraint
@@ -73,6 +73,10 @@ class Problem:
                         # Apply constraint
                         constraint.is_satisfied(list_variable_of_same_type)
             print(self.count_no_domains_left())
+            if (no_domains_left == self.count_no_domains_left()):
+                no_domains_reduced = False
+            else:
+                no_domains_left = self.count_no_domains_left()
 
         return
 
@@ -90,7 +94,7 @@ class Problem:
 
         for var in self.__varialbes_list:
             problem_solved = var.domain.is_reduced_to_one_value()
-            print(problem_solved)
+            # print(problem_solved)
         return problem_solved
 
     def count_no_domains_left(self):
@@ -342,12 +346,6 @@ if __name__ == '__main__':
     # Create the problem
     zebra_problem = Problem(variables)
 
-    # Test to ensure constraints are working
-    # Ivory = zebra_problem.get_varialbe_by_name("English")
-    # Ivory.domain.domain_values = [1]
-
-    # Test
-
     # Create constraints
     zebra_problem.create_constraint(Constraint_equality_var_var("Red","English"))
     zebra_problem.create_constraint(Constraint_equality_var_var("Spaniard","Dog"))
@@ -374,4 +372,4 @@ if __name__ == '__main__':
     # Run reduction tillgs all ture
     zebra_problem.apply_reduction()
     zebra_problem.print_current_resutls()
-
+    print(zebra_problem.test_if_problem_sloved())
