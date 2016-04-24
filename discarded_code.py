@@ -49,3 +49,23 @@
         #
         # # Apply constriant by calling object variable referance and putting in object
         # con.is_satisfied(list_varialbe_of_same_type)
+
+
+            right_of_house_2 = []
+            left_of_house_2 = []
+            for value in variable_1.domain.domain_values:
+                # Add domain value for house to right
+                possible_domain = value + 1
+                right_of_house_2.append(possible_domain)
+                # Add domain value for house to left
+                possible_domain = value - 1
+                left_of_house_2.append(possible_domain)
+            # Get list of unique elements from set
+            possilbe_locations = list(set(left_of_house_2+right_of_house_2))
+
+            # Set variable 1 to new possilbe domains
+            # Only allow legal domains
+            legal_domains = list(set(domain_range).intersection(possilbe_locations))
+            # Only take domains already in variable domain list
+            select_domains = list(set(legal_domains).intersection(variable_2.domain.domain_values))
+            variable_2.domain.domain_values = select_domains

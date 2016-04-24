@@ -234,6 +234,7 @@ class Constraint_equality_var_plus_cons(Constraints):
         possilbe_locations = []
 
         if self.either_side == 0:
+            # V1 has house V2 to the right
             for value in variable_2.domain.domain_values:
                 possilbe_domain = value + 1
                 possilbe_locations.append(possilbe_domain)
@@ -244,6 +245,16 @@ class Constraint_equality_var_plus_cons(Constraints):
             # Only take domains already in variable domain list
             select_domains = list(set(legal_domains).intersection(variable_1.domain.domain_values))
             variable_1.domain.domain_values = select_domains
+
+            location_for_v2 = []
+            for value in variable_1.domain.domain_values:
+                location_for_v2.append(value - 1)
+            # Set variable 2 to new possible domains
+            # Only allow legal domains
+            legal_domains = list(set(domain_range).intersection(location_for_v2))
+            # Only take domains already in variable domain list
+            select_domains = list(set(legal_domains).intersection(variable_2.domain.domain_values))
+            variable_2.domain.domain_values = select_domains
 
 
         elif self.either_side:
@@ -265,6 +276,25 @@ class Constraint_equality_var_plus_cons(Constraints):
             # Only take domains already in variable domain list
             select_domains = list(set(legal_domains).intersection(variable_1.domain.domain_values))
             variable_1.domain.domain_values = select_domains
+
+            right_of_house_2 = []
+            left_of_house_2 = []
+            for value in variable_1.domain.domain_values:
+                # Add domain value for house to right
+                possible_domain = value + 1
+                right_of_house_2.append(possible_domain)
+                # Add domain value for house to left
+                possible_domain = value - 1
+                left_of_house_2.append(possible_domain)
+            # Get list of unique elements from set
+            possilbe_locations = list(set(left_of_house_2+right_of_house_2))
+
+            # Set variable 1 to new possilbe domains
+            # Only allow legal domains
+            legal_domains = list(set(domain_range).intersection(possilbe_locations))
+            # Only take domains already in variable domain list
+            select_domains = list(set(legal_domains).intersection(variable_2.domain.domain_values))
+            variable_2.domain.domain_values = select_domains
 
         # print(variable_1,variable_2,constant_1)
 
@@ -332,7 +362,7 @@ if __name__ == '__main__':
 
     zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Pictionary","Fox",1,1))
     zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Cluedo","Horse",1,1))
-    
+
     zebra_problem.create_constraint(Constraint_equality_var_var("Travel The World","Orange Juice"))
     zebra_problem.create_constraint(Constraint_equality_var_var("Japanese","Backgammon"))
 
