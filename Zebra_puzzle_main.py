@@ -14,5 +14,12 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+
+    var_list = [1]
+
+    for i in var_list:
+        var_list.append(var_list[0] +i)
+        print(i)
+        if i == 10:
+            break
 

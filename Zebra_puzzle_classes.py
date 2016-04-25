@@ -8,7 +8,7 @@ class Problem:
     __problem_solved = False
     __varialbes_list = []
     __constraint_set = []
-    __possilbe_varialbe_list = []
+    __multi_solution_list = []
 
     def __init__(self,variables):
         # Generate type and domain no from data input
@@ -30,6 +30,16 @@ class Problem:
             count += 1
             if count%5 == 0:
                 print("")
+
+    def print_mulit_results(self):
+
+        print("There are a total of ", len(self.__multi_solution_list), "solutions based on the current constraint set.")
+        count = 0
+        for list_item in self.__multi_solution_list:
+            print("Solution number ", count)
+            count += 1
+            self.__varialbes_list = list_item
+            self.print_current_results()
 
     def __create_variables(self):
         # Create a variables for each of the catagories
@@ -94,7 +104,7 @@ class Problem:
 
         return
 
-    # Function to apply domain splitting
+    # Function to apply domain splitting - Now working for multi solution
     def domain_splitting(self):
 
         # Assign variables we start with
@@ -107,13 +117,20 @@ class Problem:
         solution_varialbes = []
         solved = False
 
+        # Multiple solutions
+        multi_solution_variables = []
+
 
         # Check starting domain combination is not already invalied
         if self.test_is_any_domain_empty() == False:
-            # While problem is unsolved
-            while solved == False:
+
+            # # While problem is unsolved
+            # while solved == False:
+            # Multi solution for loop
+            for current_var_list in list_of_possible_variable_combinations:
+                # print(len(list_of_possible_variable_combinations))
                 # Pop First item on the list
-                current_var_list = list_of_possible_variable_combinations.pop(0)
+                #current_var_list = list_of_possible_variable_combinations.pop(0)
 
                 # Find first list variable that has multiple domains
                 list_item = 0
@@ -135,14 +152,18 @@ class Problem:
                     # # Set copy list as instance current list
                     self.__varialbes_list = copy_of_variable_list
                     self.apply_reduction()
-                    ## If current varialbes are valid add to possible list
-                    if self.test_is_any_domain_empty() == False:
+                    ## If current varialbes are valid and not already in list add to possible list
+                    if self.test_is_any_domain_empty() == False and copy_of_variable_list not in list_of_possible_variable_combinations:
                         list_of_possible_variable_combinations.append(copy_of_variable_list)
 
-                if self.test_if_problem_sloved() == True:
-                    solved = True
+                    # Add solution to multi solutoin list if solved and not already in list
+                    if self.test_if_problem_sloved() == True and copy_of_variable_list not in self.__multi_solution_list:
+                       self.__multi_solution_list.append(copy_of_variable_list)
 
-        return True
+        # Set current variable set to first solution
+        self.__varialbes_list = self.__multi_solution_list[0]
+
+        return multi_solution_variables
 
     def set_variable_by_name(self,name,domain_value_to_set):
 
@@ -458,6 +479,12 @@ if __name__ == '__main__':
     zebra_problem.apply_reduction()
     # Run domain splitting
     zebra_problem.domain_splitting()
-    # Print current results
-    zebra_problem.print_current_results()
+
+    # Print current results - Single results
+    # zebra_problem.print_current_results()
+
+    # Print results - Multiple results
+    zebra_problem.print_mulit_results()
+
+
     # print(zebra_problem.test_if_problem_sloved())
