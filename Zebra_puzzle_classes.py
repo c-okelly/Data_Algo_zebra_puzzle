@@ -1,12 +1,14 @@
 # Author Conor O'Kelly
 # This file will contain all of the classes required for the puzzle
 
+import copy
 
 class Problem:
 
     __problem_solved = False
     __varialbes_list = []
     __constraint_set = []
+    __possilbe_varialbe_list = []
 
     def __init__(self,variables):
         # Generate type and domain no from data input
@@ -19,7 +21,7 @@ class Problem:
     def __repr__(self):
         return "Main problems class. The problem is currently sloved => " + str(self.problem_solved)
 
-    def print_current_resutls(self):
+    def print_current_results(self):
 
         count = 0
         for item in self.__varialbes_list:
@@ -56,6 +58,7 @@ class Problem:
         if valid_con:
             self.__constraint_set.append(constriant)
 
+    # Function to apply reduction
     def apply_reduction(self):
 
         no_domains_reduced = True
@@ -83,13 +86,68 @@ class Problem:
                         list_variable_of_same_type = self.return_varialbes_by_type(var_type)
                         # Apply constraint
                         constraint.is_satisfied(list_variable_of_same_type)
-            print(self.count_no_domains_left())
+            # print(self.count_no_domains_left())
             if (no_domains_left == self.count_no_domains_left()):
                 no_domains_reduced = False
             else:
                 no_domains_left = self.count_no_domains_left()
 
         return
+
+    # Function to apply domain splitting
+    def domain_splitting(self):
+
+        # Assign variables we start with
+        starting_variables_list = self.__varialbes_list
+
+        # Add starting variables combination to list
+        list_of_possible_variable_combinations = [self.__varialbes_list]
+
+        # Solution to the puzzle
+        solution_varialbes = []
+        solved = False
+
+
+        # Check starting domain combination is not already invalied
+        if self.test_is_any_domain_empty() == False:
+            # While problem is unsolved
+            while solved == False:
+                # Pop First item on the list
+                current_var_list = list_of_possible_variable_combinations.pop(0)
+
+                # Find first list variable that has multiple domains
+                list_item = 0
+                count = 0
+                for var in current_var_list:
+                    if var.domain.is_reduced_to_one_value() == False:
+                        list_item = count
+                        break
+                    else:
+                        count += 1
+                        pass
+
+                # Split domain for first item with multiple domain values
+                for domain_value in current_var_list[list_item].domain.domain_values:
+                    # Create copy list
+                    copy_of_variable_list = copy.deepcopy(current_var_list)
+                    copy_of_variable_list[list_item].domain.domain_values = [domain_value]
+
+                    # # Set copy list as instance current list
+                    self.__varialbes_list = copy_of_variable_list
+                    self.apply_reduction()
+                    ## If current varialbes are valid add to possible list
+                    if self.test_is_any_domain_empty() == False:
+                        list_of_possible_variable_combinations.append(copy_of_variable_list)
+
+                if self.test_if_problem_sloved() == True:
+                    solved = True
+
+        return True
+
+    def set_variable_by_name(self,name,domain_value_to_set):
+
+        var = self.get_varialbe_by_name(name)
+        var.domain.domain_values = [domain_value_to_set]
 
     def return_varialbes_by_type(self,search_type):
 
@@ -104,8 +162,10 @@ class Problem:
         problem_solved = True
 
         for var in self.__varialbes_list:
-            problem_solved = var.domain.is_reduced_to_one_value()
-            # print(problem_solved)
+            current_var_solved = var.domain.is_reduced_to_one_value()
+            # print(var, current_var_solved)
+            if current_var_solved == False:
+                problem_solved = False
         return problem_solved
 
     def test_is_any_domain_empty(self):
@@ -354,6 +414,8 @@ class Constraint_difference_var_var(Constraints):
         return "Constraint for varialbe_1 not being equal to varialbe_2 in same type"
 
 
+class Copy_ob():
+    pass
 
 if __name__ == '__main__':
     # Slightly altered from standard format so late item in list is the variable types.
@@ -376,6 +438,7 @@ if __name__ == '__main__':
 
     zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Green","Ivory",1,0))
     zebra_problem.create_constraint(Constraint_equality_var_var("Snakes and Ladders","Snails"))
+    zebra_problem.create_constraint(Constraint_equality_var_var("Cluedo","Yellow"))
 
     zebra_problem.create_constraint(Constraint_equality_var_cons("Milk",3))
     zebra_problem.create_constraint(Constraint_equality_var_cons("Norwegian",1))
@@ -393,10 +456,8 @@ if __name__ == '__main__':
 
     # Run reduction till no more domains can be reduced
     zebra_problem.apply_reduction()
-    zebra_problem.print_current_resutls()
-
-    # zebra_problem.domain_splitting()
-
-    # # Test on domains / overall problem
+    # Run domain splitting
+    zebra_problem.domain_splitting()
+    # Print current results
+    zebra_problem.print_current_results()
     # print(zebra_problem.test_if_problem_sloved())
-    # print(zebra_problem.test_is_any_domain_empty())
