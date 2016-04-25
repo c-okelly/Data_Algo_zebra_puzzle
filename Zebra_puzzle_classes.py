@@ -43,7 +43,7 @@ class Problem:
 
     def print_final_resutls_single(self):
         if self.test_if_problem_sloved() == False:
-            print("No soltuion for the problem was found")
+            print("No solution for the problem was found")
         else:
             print("The solution to the problem is")
             self.print_current_results()
@@ -482,6 +482,7 @@ if __name__ == '__main__':
 
     zebra_problem.create_constraint(Constraint_equality_var_plus_cons("Norwegian","Blue",1,1))
 
+
     # General constraint for domains being unable to have the same value
     zebra_problem.create_constraint(Constraint_difference_var_var())
 
@@ -491,10 +492,9 @@ if __name__ == '__main__':
     zebra_problem.domain_splitting()
 
     # Print current results - Single results
-    zebra_problem.print_current_results()
+    zebra_problem.print_final_resutls_single()
 
     # Print results - Multiple results
     # zebra_problem.print_mulit_results()
 
 
-    print(zebra_problem.test_if_problem_sloved())
