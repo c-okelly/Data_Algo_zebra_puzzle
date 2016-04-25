@@ -41,6 +41,13 @@ class Problem:
             self.__varialbes_list = list_item
             self.print_current_results()
 
+    def print_final_resutls_single(self):
+        if self.test_if_problem_sloved() == False:
+            print("No soltuion for the problem was found")
+        else:
+            print("The solution to the problem is")
+            self.print_current_results()
+
     def __create_variables(self):
         # Create a variables for each of the catagories
         for no_1 in range(0,len(self.varialbe_types)):
@@ -160,8 +167,11 @@ class Problem:
                     if self.test_if_problem_sloved() == True and copy_of_variable_list not in self.__multi_solution_list:
                        self.__multi_solution_list.append(copy_of_variable_list)
 
-        # Set current variable set to first solution
-        self.__varialbes_list = self.__multi_solution_list[0]
+        # Set current variable set to first solution if solution exists if not skip and leave as current varialbe set
+        try:
+            self.__varialbes_list = self.__multi_solution_list[0]
+        except:
+            pass
 
         return multi_solution_variables
 
