@@ -43,7 +43,18 @@ class Problem:
                 return variable
 
     def create_constraint(self,constriant):
-        self.__constraint_set.append(constriant)
+        # Validate the constant has beeen set to a domain within the limits of current problem
+        valid_con = True
+
+        if type(constriant) == Constraint_equality_var_cons:
+            if constriant.ob_constant_1 in list(range(1,self.no_domains+1)):
+                valid_con = True
+            else:
+                valid_con = False
+                print("The constraint ",constriant, "is not valid")
+
+        if valid_con:
+            self.__constraint_set.append(constriant)
 
     def apply_reduction(self):
 
@@ -96,6 +107,17 @@ class Problem:
             problem_solved = var.domain.is_reduced_to_one_value()
             # print(problem_solved)
         return problem_solved
+
+    def test_is_any_domain_empty(self):
+
+        any_domain_empty = False
+
+        for var in self.__varialbes_list:
+            if var.domain.is_empty() == True:
+                any_domain_empty = True
+
+
+        return any_domain_empty
 
     def count_no_domains_left(self):
         count = 0
@@ -369,7 +391,12 @@ if __name__ == '__main__':
     # General constraint for domains being unable to have the same value
     zebra_problem.create_constraint(Constraint_difference_var_var())
 
-    # Run reduction tillgs all ture
+    # Run reduction till no more domains can be reduced
     zebra_problem.apply_reduction()
     zebra_problem.print_current_resutls()
-    print(zebra_problem.test_if_problem_sloved())
+
+    # zebra_problem.domain_splitting()
+
+    # # Test on domains / overall problem
+    # print(zebra_problem.test_if_problem_sloved())
+    # print(zebra_problem.test_is_any_domain_empty())
