@@ -481,10 +481,10 @@ if __name__ == '__main__':
     zebra_problem.domain_splitting()
 
     # Print current results - Single results
-    # zebra_problem.print_current_results()
+    zebra_problem.print_current_results()
 
     # Print results - Multiple results
-    zebra_problem.print_mulit_results()
+    # zebra_problem.print_mulit_results()
 
 
-    # print(zebra_problem.test_if_problem_sloved())
+    print(zebra_problem.test_if_problem_sloved())
