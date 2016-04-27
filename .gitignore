@@ -1,2 +1,4 @@
 .DS_Store
-.~lock.Untitled 1.odt#
+
+# Ignore all Google drive locks
+.~lock.*
