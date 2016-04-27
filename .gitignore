@@ -2,3 +2,7 @@
 
 # Ignore all Google drive locks
 .~lock.*
+
+# Pycharm files
+__pycache__/
+
