@@ -12,6 +12,7 @@ class Problem:
 
     def __init__(self,variables):
         # Generate type and domain no from data input
+        self.variables = variables
         self.varialbe_types = variables[-1]
         self.no_domains = len(variables[0])
 
@@ -51,9 +52,9 @@ class Problem:
     def __create_variables(self):
         # Create a variables for each of the catagories
         for no_1 in range(0,len(self.varialbe_types)):
-            for no_2 in range(0,len(variables[no_1])):
-                variable = Variable(variables[no_1][no_2],self.varialbe_types[no_1],self.no_domains)
-                self.__varialbes_list.append(variable)
+            for no_2 in range(0,len(self.variables[no_1])):
+                var = Variable(self.variables[no_1][no_2],self.varialbe_types[no_1],self.no_domains)
+                self.__varialbes_list.append(var)
 
     def get_varialbe_by_name(self,search_name):
 
