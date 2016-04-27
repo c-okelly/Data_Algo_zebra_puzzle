@@ -28,7 +28,7 @@ class Problem:
             print(item)
             #Break line every fifth line
             count += 1
-            if count%5 == 0:
+            if count%(self.no_domains) == 0:
                 print("")
 
     def print_mulit_results(self):
@@ -112,7 +112,7 @@ class Problem:
         return
 
     # Function to apply domain splitting - Now working for multi solution
-    def domain_splitting(self):
+    def domain_splitting(self,results_single=0):
 
         # Assign variables we start with
         starting_variables_list = self.__varialbes_list
@@ -166,6 +166,12 @@ class Problem:
                     # Add solution to multi solutoin list if solved and not already in list
                     if self.test_if_problem_sloved() == True and copy_of_variable_list not in self.__multi_solution_list:
                        self.__multi_solution_list.append(copy_of_variable_list)
+
+                # If only single results are wanted break when first one found
+                if results_single == 0 and len(self.__multi_solution_list) >= 1:
+                    break
+
+
         else:
             print("Problem in invalid at start of splitting. No solution possible")
 
@@ -490,11 +496,12 @@ if __name__ == '__main__':
     # Run reduction till no more domains can be reduced
     zebra_problem.apply_reduction()
 
-    # Run domain splitting
-    zebra_problem.domain_splitting()
+
+    # Run domain splitting. If multiple results wanted set varialbe to 1
+    zebra_problem.domain_splitting(results_single=0)
 
     # Print current results - Single results
-    zebra_problem.print_final_resutls_single()
+    # zebra_problem.print_final_resutls_single()
 
     # Print results - Multiple results
     zebra_problem.print_mulit_results()
