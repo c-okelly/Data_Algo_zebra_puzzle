@@ -6,3 +6,5 @@
 # Pycharm files
 __pycache__/
 
+# Ignore draft file
+Zebra\ Documentation.odt
