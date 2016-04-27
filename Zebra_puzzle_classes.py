@@ -488,6 +488,7 @@ if __name__ == '__main__':
 
     # Run reduction till no more domains can be reduced
     zebra_problem.apply_reduction()
+
     # Run domain splitting
     zebra_problem.domain_splitting()
 
