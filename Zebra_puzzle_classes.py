@@ -445,9 +445,6 @@ class Constraint_difference_var_var(Constraints):
         return "Constraint for varialbe_1 not being equal to varialbe_2 in same type"
 
 
-class Copy_ob():
-    pass
-
 if __name__ == '__main__':
     # Slightly altered from standard format so late item in list is the variable types.
     # Format would allow program to be more flexible in future
