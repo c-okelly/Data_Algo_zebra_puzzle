@@ -166,6 +166,8 @@ class Problem:
                     # Add solution to multi solutoin list if solved and not already in list
                     if self.test_if_problem_sloved() == True and copy_of_variable_list not in self.__multi_solution_list:
                        self.__multi_solution_list.append(copy_of_variable_list)
+        else:
+            print("Problem in invalid at start of splitting. No solution possible")
 
         # Set current variable set to first solution if solution exists if not skip and leave as current varialbe set
         try:
@@ -326,6 +328,8 @@ class Constraint_equality_var_cons(Constraints):
         # If constant is in the list replace domain list with single value
         if constant_1 in variable_1.domain.domain_values:
             variable_1.domain.domain_values = [constant_1]
+
+        # No longer an issues as this type of constaint is validate on creation.
         # Not sure if this error will ever arise?
         else:
             print(constant_1, "is not in the list")
@@ -493,6 +497,6 @@ if __name__ == '__main__':
     zebra_problem.print_final_resutls_single()
 
     # Print results - Multiple results
-    # zebra_problem.print_mulit_results()
+    zebra_problem.print_mulit_results()
 
 
