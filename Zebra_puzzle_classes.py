@@ -163,6 +163,7 @@ class Problem:
                     ## If current varialbes are valid and not already in list add to possible list
                     if self.test_is_any_domain_empty() == False and copy_of_variable_list not in list_of_possible_variable_combinations:
                         list_of_possible_variable_combinations.append(copy_of_variable_list)
+                        print("Currenlt there are ",self.count_no_domains_left()," variables")
 
                     # Add solution to multi solutoin list if solved and not already in list
                     if self.test_if_problem_sloved() == True and copy_of_variable_list not in self.__multi_solution_list:
